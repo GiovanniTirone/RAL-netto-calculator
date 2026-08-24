@@ -1,15 +1,15 @@
 # Assunzioni
 
-## Lavoratore dipendente indeterminato
+### Lavoratore dipendente indeterminato
 Supponiamo che il target sia un lavoratore dipendente residente a Milano, a tempo indeterminato, che lavori già da tutto l'anno.
 
-## Aliquota contributiva fissa
+### Aliquota contributiva fissa
 Per un dipendente privato standard viene utilizzata un'aliquota contributiva a carico del lavoratore del 9,19%. Il modello non gestisce le differenze contributive legate a settore, CCNL, qualifica, fondi speciali o contribuzioni aggiuntive.
 
-## Imponibilile previdenziale = RAL
+### Imponibilile previdenziale = RAL
 Supponiamo che l'imponibile previdenziale coincida con la RAL, anche se potrebbero sommarsi voci aggiuntive (fringe benefit; alcune indennità; premi; somme corrisposte a titolo di welfare; compensi arretrati; etc...)
 
-## Fonti
+# Fonti
 
 https://infoprecompilata.agenziaentrate.gov.it/portale/semplificata-mod-lavoro-dipendente-e-pensioni
 
