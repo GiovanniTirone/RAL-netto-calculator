@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Stipendio Netto</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .main-results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .result-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-label {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .detail {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .error {
+            color: #dc2626;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            .main-results {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 20px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Calcolatore stipendio netto</h1>
+
+        <div class="subtitle">
+            Inserisci la retribuzione annua lorda e gli eventuali altri redditi.
+        </div>
+
+        <div class="form-group">
+            <label for="ral">RAL (€)</label>
+            <input
+                id="ral"
+                type="number"
+                min="0"
+                step="100"
+                placeholder="es. 40000"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="altriRedditi">Altri redditi (€)</label>
+            <input
+                id="altriRedditi"
+                type="number"
+                min="0"
+                step="100"
+                value="0"
+            >
+        </div>
+
+        <button onclick="calcola()">
+            Calcola
+        </button>
+
+        <div id="error" class="error"></div>
+
+        <div id="results" class="results">
+
+            <div class="main-results">
+
+                <div class="result-card">
+                    <div class="result-label">
+                        Trattenute annue
+                    </div>
+
+                    <div id="trattenute" class="result-value">
+                        -
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">
+                        Netto annuo
+                    </div>
+
+                    <div id="nettoAnnuale" class="result-value">
+                        -
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">
+                        Netto mensile
+                    </div>
+
+                    <div id="nettoMensile" class="result-value">
+                        -
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="detail">
+
+                <h2>Dettaglio</h2>
+
+                <div class="detail-row">
+                    <span>RAL</span>
+                    <strong id="detailRal">-</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Contributi INPS</span>
+                    <strong id="detailInps">-</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>IRPEF netta</span>
+                    <strong id="detailIrpef">-</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Addizionale regionale</span>
+                    <strong id="detailRegionale">-</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Addizionale comunale</span>
+                    <strong id="detailComunale">-</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Somma esente</span>
+                    <strong id="detailSommaEsente">-</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function contributi_inps(ral) {
+
+        const aliquota = 0.0919;
+        const massimale = 122295;
+
+        const imponibile =
+            Math.min(ral, massimale);
+
+        return imponibile * aliquota;
+    }
+
+
+    function imponibile_irpef(ral, inps) {
+
+        return ral - inps;
+    }
+
+
+    function irpef_lorda(imponibile) {
+
+        let result = 0;
+
+        if (imponibile > 50000) {
+
+            result +=
+                (imponibile - 50000) * 0.43;
+
+            imponibile = 50000;
+        }
+
+        if (imponibile > 28000) {
+
+            result +=
+                (imponibile - 28000) * 0.33;
+
+            imponibile = 28000;
+        }
+
+        result += imponibile * 0.23;
+
+        return result;
+    }
+
+
+    function detrazione_lavoro_dipendente(reddito) {
+
+        let detrazione = 0;
+
+        if (reddito <= 15000) {
+
+            detrazione = 1955;
+
+        } else if (reddito <= 28000) {
+
+            detrazione =
+                1910 +
+                1190 * (28000 - reddito) / 13000;
+
+        } else if (reddito <= 50000) {
+
+            detrazione =
+                1910 * (50000 - reddito) / 22000;
+        }
+
+        if (reddito > 25000 && reddito <= 35000) {
+            detrazione += 65;
+        }
+
+        return detrazione;
+    }
+
+
+    function somma_esente(reddito_lavoro) {
+
+        if (reddito_lavoro <= 8500) {
+            return reddito_lavoro * 0.071;
+        }
+
+        if (reddito_lavoro <= 15000) {
+            return reddito_lavoro * 0.053;
+        }
+
+        if (reddito_lavoro <= 20000) {
+            return reddito_lavoro * 0.048;
+        }
+
+        return 0;
+    }
+
+
+    function detrazioni_aggiuntive(reddito) {
+
+        if (reddito > 20000 && reddito <= 32000) {
+            return 1000;
+        }
+
+        if (reddito > 32000 && reddito <= 40000) {
+            return 1000 * (40000 - reddito) / 8000;
+        }
+
+        return 0;
+    }
+
+    // lombardia
+    function addizionale_regionale(reddito) {
+
+        let result = 0;
+
+        if (reddito > 50000) {
+
+            result +=
+                (reddito - 50000) * 0.0173;
+
+            reddito = 50000;
+        }
+
+        if (reddito > 28000) {
+
+            result +=
+                (reddito - 28000) * 0.0172;
+
+            reddito = 28000;
+        }
+
+        if (reddito > 15000) {
+
+            result +=
+                (reddito - 15000) * 0.0158;
+
+            reddito = 15000;
+        }
+
+        result += reddito * 0.0123;
+
+        return result;
+    }
+
+
+    // milano
+    function addizionale_comunale(reddito) {
+
+        if (reddito <= 23000) {
+            return 0;
+        }
+
+        return reddito * 0.008;
+    }
+
+
+
+    function stipendio_netto_annuo(ral, altri_redditi) {
+
+        const inps = contributi_inps(ral);
+
+        const imponibile_irpef = imponibile_irpef_calcolo(ral, inps);
+
+        const reddito_complessivo = imponibile_irpef + altri_redditi;
+
+        const irpef_lorda_val = irpef_lorda(imponibile_irpef);
+
+        const detrazioni = detrazione_lavoro_dipendente(reddito_complessivo);
+
+        let detrazioni_aggiuntive_val = 0;
+        let somma_esente_val = 0;
+
+        if (reddito_complessivo <= 20000) {
+            somma_esente_val = somma_esente(ral);
+        } else {
+            detrazioni_aggiuntive_val = detrazioni_aggiuntive(reddito_complessivo);
+        }
+
+        const irpef_netta = Math.max(
+                0,
+                irpef_lorda_val
+                - detrazioni
+                - detrazioni_aggiuntive_val
+            );
+
+        const addizionale_regionale_val = addizionale_regionale(reddito_complessivo);
+        const addizionale_comunale_val =addizionale_comunale(reddito_complessivo );
+
+        const netto = Math.max(
+                0,
+                ral
+                - inps
+                - irpef_netta
+                - addizionale_regionale_val
+                - addizionale_comunale_val
+                + somma_esente_val
+            );
+
+        const trattenute =
+            inps
+            + irpef_netta
+            + addizionale_regionale_val
+            + addizionale_comunale_val;
+
+        return {
+
+            trattenute: trattenute,
+
+            netto_annuo: netto,
+
+            netto_mensile: netto / 12,
+
+            inps: inps,
+
+            irpef_netta: irpef_netta,
+
+            addizionale_regionale:
+                addizionale_regionale_val,
+
+            addizionale_comunale:
+                addizionale_comunale_val,
+
+            somma_esente:
+                somma_esente_val
+        };
+    }
+
+
+    function imponibile_irpef_calcolo(ral, inps) {
+
+        return ral - inps;
+    }
+
+
+    function euro(value) {
+
+        return new Intl.NumberFormat(
+            'it-IT',
+            {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2
+            }
+        ).format(value);
+    }
+
+
+    function calcola() {
+
+        const ral =
+            parseFloat(
+                document.getElementById('ral').value
+            );
+
+        const altriRedditi =
+            parseFloat(
+                document.getElementById('altriRedditi').value
+            ) || 0;
+
+        const error =
+            document.getElementById('error');
+
+        if (isNaN(ral) || ral < 0) {
+
+            error.textContent =
+                'Inserisci una RAL valida.';
+
+            error.style.display = 'block';
+
+            return;
+        }
+
+        error.style.display = 'none';
+
+        const result =
+            stipendio_netto_annuo(
+                ral,
+                altriRedditi
+            );
+
+        document.getElementById('trattenute')
+            .textContent = euro(result.trattenute);
+
+        document.getElementById('nettoAnnuale')
+            .textContent = euro(result.netto_annuo);
+
+        document.getElementById('nettoMensile')
+            .textContent = euro(result.netto_mensile);
+
+        document.getElementById('detailRal')
+            .textContent = euro(ral);
+
+        document.getElementById('detailInps')
+            .textContent = euro(result.inps);
+
+        document.getElementById('detailIrpef')
+            .textContent = euro(result.irpef_netta);
+
+        document.getElementById('detailRegionale')
+            .textContent = euro(
+                result.addizionale_regionale
+            );
+
+        document.getElementById('detailComunale')
+            .textContent = euro(
+                result.addizionale_comunale
+            );
+
+        document.getElementById('detailSommaEsente')
+            .textContent = euro(
+                result.somma_esente
+            );
+
+        document.getElementById('results')
+            .style.display = 'block';
+    }
+
+</script>
+
+</body>
+</html>
